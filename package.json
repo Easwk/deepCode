@@ -2,7 +2,7 @@
   "name": "deepcode",
   "displayName": "deepCode",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "menus": {
       "editor/context": [
@@ -31,7 +31,7 @@
         {
           "id": "vs-deepcode-bar",
           "title": "deepcode",
-          "icon": "actReq.svg"
+          "icon": "./images/icon.svg"
         }
       ]
     },
@@ -40,7 +40,7 @@
         {
           "type": "webview",
           "id": "vs-deepcode-bar.webview",
-          "name": "deepcode Chat"
+          "name": "Chat"
         }
       ]
     },
@@ -57,16 +57,7 @@
     "configuration": {
       "title": "deepcode",
       "properties": {
-        "deepcode.apiKey": {
-          "type": "string",
-          "default": "sk-c49544eefa7343ae83fbe4f500f44659",
-          "description": "API Key for deepcode"
-        },
-        "deepcode.endpoint": {
-          "type": "string",
-          "default": "https://api.deepseek.com/chat/completions",
-          "description": "API Endpoint"
-        },
+        
         "deepcode.model": {
           "type": "string",
           "default": "deepseek-chat",

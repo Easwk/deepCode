@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+export function getPageHtml() {
+  const html = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -26,7 +27,7 @@
   <div id="app">
     <el-tabs type="border-card" tab-position="bottom" class="tabs">
       <el-tab-pane label="User">
-        <p>鼠标右键选中代码，开始进行对话</p>
+        <p>鼠标右键选中代码，开88888始进行对话</p>
         <div v-for="item in state.messageList" :key="item.date">
           <p>{{item.type}}:</p>
           <pre><code>{{item.context}}  </code></pre>
@@ -372,4 +373,7 @@
     overflow: auto;
     height: 100%;
   }
-</style>
+</style>`;
+
+  return html;
+}

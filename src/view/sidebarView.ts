@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { setHtml } from "./contentUtil";
+import { setHtml, setHtml0 } from "./contentUtil";
 import { apiKeyFn, deepseekModelFn, readConfigs, readcurModelName } from "./credentials";
 import { tryCall } from "./api";
+import { getPageHtml } from "../page/toHTML";
+
+const fs = require("fs");
 interface ChatMessage {
   type: "user" | "assistant" | "system";
   content: string;
@@ -26,10 +29,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this._view = webviewView;
     webviewView.webview.options = {
       enableScripts: true,
-      // localResourceRoots: [this.context.extensionUri],
-      localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, "out"))],
+      localResourceRoots: [this.context.extensionUri],
+      // localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, "out"))],
     };
-    this._updateView();
 
     const webview = webviewView.webview;
     // 消息接收处理
@@ -81,6 +83,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         });
       }
     });
+
+    this._updateView();
   }
 
   postMessage(message: any) {
@@ -94,25 +98,29 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   private _updateView() {
     if (this._view) {
-      const panel = this._view;
-
+      const webview = this._view.webview;
+      // const chatViewUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "media", "chatView.js"));
       // // const stylePath = path.join(this.context.extensionPath, "src/page/style.css");
       // // let styleCss = require("fs").readFileSync(stylePath, "utf-8");
 
       // // const jsPath = path.join(this.context.extensionPath, "src/page/main.js");
       // // let mainJs = require("fs").readFileSync(jsPath, "utf-8");
 
-      const htmlPath = path.join(this.context.extensionPath, "src/page/index.html");
-      let html = require("fs").readFileSync(htmlPath, "utf-8");
+      // const htmlPath = path.join(this.context.extensionPath, "src/page/index.html");
+      // let html = fs.readFileSync(htmlPath, "utf-8");
 
       // // 替换 HTML 模板中的占位符
       // html = html.replace("{{cspSource}}", panel.webview.cspSource);
       // // .replace("{{styleCss}}", styleCss)
       // // .replace("{{mainJs}}", mainJs);
 
-      panel.webview.html = html;
+      //  webview.html = setHtml0(this._messages, this._curStatus);
 
-      // panel.webview.html = setHtml(this._messages, this._curStatus);
+      //  webview.html = setHtml(this._messages, this._curStatus);
+
+      webview.html = getPageHtml();
+
+      console.log("panel.webview.html: ", webview.html);
     }
   }
 

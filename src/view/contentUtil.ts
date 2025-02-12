@@ -1,11 +1,88 @@
-<!DOCTYPE html>
+// 添加HTML转义函数（防止XSS攻击并保留代码格式）
+export function escapeHtml(unsafe: string) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+export function textFn(messages: any[], curStatus: string) {
+  let text = "";
+  messages.forEach((msg) => {
+    const codeContent = `<pre><code> ${escapeHtml(msg.content)} </code></pre>`;
+    text += `
+          <div class="message ${msg.type}">
+              <div class="message-header">
+                  <strong>${msg.type}: ${msg.type === "user" ? ":优化以下代码并添加注释" : ":结果如下"}  </strong>
+                  <span class="timestamp"> (${msg.timestamp.toLocaleTimeString()}) </span>
+              </div>
+              <div class="message-content">
+                  ${codeContent}
+              </div>
+              
+          </div>
+      `;
+  });
+  const statusBadge =
+    curStatus === "pending"
+      ? '<span class="status loading">⏳ Processing...</span>'
+      : curStatus === "error"
+      ? '<span class="status error">❌ Failed</span>'
+      : "";
+
+  text += statusBadge;
+  return text;
+}
+
+export function setHtml(messages: any[], curStatus: string) {
+  console.log(" this._messages: ", messages);
+
+  const html = `<!DOCTYPE html>
+                  <html lang="en">
+                    <head>
+                      <meta charset="UTF-8" />
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                      <title>Hello World!</title>
+                      <style>
+                      .message-content{background:#f2f2f2}
+                      button { padding: 5px 10px; margin: 5px; }
+                      </style>
+                      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/github.min.css">
+                      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+                    <body>
+                      <button id="helloBtn">注册/修改key</button><button id="modelBtn">修改model</button>
+                      <div class="chat-container"  >${textFn(messages, curStatus)}</div>
+                      <script>
+                        hljs.highlightAll();
+                      </script>
+                      <script>
+                        const vscode = acquireVsCodeApi();
+                        console.log('vscode: ', vscode);
+
+                      document.getElementById('helloBtn').addEventListener('click', () => {
+                        vscode.postMessage({ command: 'userMessage_changeApiKey' });
+                      });
+
+                      document.getElementById('modelBtn').addEventListener('click', () => {
+                        vscode.postMessage({ command: 'userMessage_changeModel' });
+                      });
+                    </script>
+                    </body>
+                  </html>`;
+
+  return html;
+}
+
+export function setHtml0(messages: any[], curStatus: string) {
+  console.log(" this._messages: ", messages);
+
+  const html = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta http-equiv="Expires" content="0" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Cache-control" content="no-cache" />
-  <meta http-equiv="Cache" content="no-cache" />
 
   <meta charset="UTF-8" />
   <meta name="viewport"
@@ -28,16 +105,12 @@
 
 <body>
   <div id="app">
-
-
     <el-tabs type="border-card" tab-position="bottom" class="tabs">
       <el-tab-pane label="User">
         <div v-for="item in state.messageList" :key="item.date">
-          <p>{{item.user}}</p>
-          <pre><code  > {{item.context}}  </code></pre>
-          <br />
+          <p>{{item.type}}:</p>
+          <pre><code>{{item.context}}  </code></pre>
         </div>
-
 
       </el-tab-pane>
       <el-tab-pane label="Config">
@@ -49,7 +122,7 @@
         </el-select>
         <el-button @click="resetClick" size="small">reset</el-button>
 
-        <el-input v-model="state.curModel" :autosize="{ minRows: 8 , maxRows: 12}" type="textarea"
+        <el-input v-model="state.curModel" :autosize="{ minRows: 8 , maxRows:14 }" type="textarea"
           placeholder="模型配置"></el-input>
         <br />
         <el-button @click="tryClick" size="small">try</el-button>
@@ -85,7 +158,9 @@
   hljs.highlightAll();
 </script>
 
+<script>
 
+</script>
 <script>
   const { createApp, watch, computed, reactive, onMounted, } = Vue;
 
@@ -95,28 +170,28 @@
     setup() {
 
       //  发送消息到插件核心
-      // const vscode = acquireVsCodeApi();
+      const vscode = acquireVsCodeApi();
 
       const sendMessage = (msg) => {
-        // try {
-        //   vscode.postMessage(msg);
-        // } catch (e) {
-        //   state.error = e
-        //   state.tips = vscode
-        // }
+        try {
+          vscode.postMessage(msg);
+        } catch (e) {
+          state.error = e
+          state.tips = vscode
+        }
       };
 
       // 添加HTML转义函数（防止XSS攻击并保留代码格式）
       const escapeHtml = (unsafe) => {
-        // const code = unsafe
-        //   .replace(/&/g, "&amp;")
-        //   .replace(/</g, "&lt;")
-        //   .replace(/>/g, "&gt;")
-        //   .replace(/"/g, "&quot;")
-        //   .replace(/'/g, "&#039;");
+        const code = unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
 
 
-        return unsafe;
+        return code;
 
       }
 
@@ -140,12 +215,39 @@
             config: {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer sk-c49544eefa7343ae83fbe4f500f44659`,
+                Authorization:  'Bearer sk-c49544eefa7343ae83fbe4f500f44659',
               },
             },
           },
           ajaxReqParamPath: 'messages[0].content',
           ajaxPostResponePath: 'response.choices[0].message.content'
+        },
+        {
+          "modelName": "Qwen/Qwen2.5-7B-Instruct(Free)",
+          "ajaxPostReqConfig": {
+            "url": "https://api.siliconflow.cn/v1/chat/completions",
+            "data": {
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "中国大模型行业2025年将会迎来哪些机遇和挑战？"
+                }
+              ],
+
+
+              "response_format": { "type": "text" }
+
+            },
+            "config": {
+              "headers": {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer sk-wzlatwbqgjohinanrmqsecobexskyxaqacnkbeqbcduitmcp"
+              }
+            }
+          },
+          "ajaxReqParamPath": "messages[0].content",
+          "ajaxPostResponePath": "response.choices[0].message.content"
         }
       ]
 
@@ -162,19 +264,7 @@
         ...defConfigs
         ],
 
-        messageList: [{
-          user: 'user',
-          context: `<div class="error">
-          { state.error}  </div>;
-       `
-        }, {
-          user: 'user',
-          context: `if(message.command === "userMessage_changeModel") {
-          console.log("userMessage:userMessage_changeModel ");
-    deepseekModelFn(this.context, "change");
-      }
-       `
-        }]
+        messageList: []
       })
 
       const clearMsg = () => {
@@ -185,15 +275,15 @@
       const checkConfig = (config) => {
         clearMsg()
         if (!config.modelName) {
-          state.error = `需要设置模型名称参数----modelName`
+          state.error = '需要设置模型名称参数----modelName'
           return false
         }
         if (!config.ajaxPostReqConfig) {
-          state.error = `需要设置post请求参数----ajaxPostReqConfig`
+          state.error = '需要设置post请求参数----ajaxPostReqConfig'
           return false
         }
         if (!config.ajaxPostResponePath) {
-          state.error = `需要设置响应解析路径参数----ajaxPostResponePath`
+          state.error = '需要设置响应解析路径参数----ajaxPostResponePath'
           return false
         }
         return true
@@ -257,20 +347,18 @@
       // 接收来自插件核心的消息
       window.addEventListener('message', (event) => {
 
-        const { command, res, sourceData } = event.data
+        const { command, res, curCoifg, sourceData } = event.data
         clearMsg()
-
-        state.msgTest = '个体 message' + JSON.stringify(event, null, 2)
 
         if (command === 'try_response') {
 
           if (res.code === 200) {
             try {
-              state.tips = _.get(res, sourceData.ajaxPostResponePath)
+              state.tips = _.get(res, curCoifg.ajaxPostResponePath)
             } catch (e) {
-              state.error = `解析响应数据失败,根据数据结构设置正确的响应解析路径参数(ajaxPostResponePath):${e}`
+              state.error = "解析响应数据失败,根据数据结构设置正确的响应解析路径参数(ajaxPostResponePath):\${e}"
             }
-            state.response = JSON.stringify(JSON.parse(res), null, 2)
+            state.response = res.response
           }
           if (res.code === 100) {
             state.error = res.error
@@ -281,19 +369,22 @@
 
           if (res.code === 200) {
             try {
-              const context = _.get(res, sourceData.ajaxPostResponePath)
+
+              const { modelName } = res
+              const config = _.find(state.modelConfigs, { modelName })
+              const context = _.get(res, config.ajaxPostResponePath)
 
               state.messageList.push({
-                context: sourceData,
+                context: context,
                 type: 'sys',
                 date: new Date()
               })
 
 
             } catch (e) {
-              const context = `解析响应数据失败,根据数据结构设置正确的响应解析路径参数(ajaxPostResponePath):${e}`
+              const context = '解析响应数据失败,根据数据结构设置正确的响应解析路径参数(ajaxPostResponePath):\${e}'
               state.messageList.push({
-                context: sourceData,
+                context,
                 type: 'sys',
                 date: new Date()
               })
@@ -303,12 +394,11 @@
           if (res.code === 100) {
             const context = res.error
             state.messageList.push({
-              context: sourceData,
+              context,
               type: 'sys',
               date: new Date()
             })
           }
-
           setTimeout(() => {
             hljs.highlightAll();
           })
@@ -379,7 +469,7 @@
 
   .tabs {
     height: calc(100% - 25px);
-    background-color: rgba(184, 179, 179, 0.2);
+    background-color: #eee;
     padding: 10px;
 
     overflow: hidden;
@@ -393,11 +483,12 @@
     color: rgb(36, 170, 3)
   }
 
-  .el-tabs__content {}
-
   .el-tab-pane {
     overflow: auto;
     height: 100%;
 
   }
-</style>
+</style>`;
+
+  return html;
+}

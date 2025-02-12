@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
-import * as path from "path";
-import { callDeepSeekAPI } from "./api";
-import { SidebarProvider } from "./sidebarProvider";
-import { apiKeyFn, deepseekModelFn, getCurCurConfig } from "./credentials";
+import { callDeepSeekAPI } from "./view/api";
+import { SidebarProvider } from "./view/sidebarView";
 
 const mainFn = async (panel: SidebarProvider, context: vscode.ExtensionContext, fnType: string) => {
   const editor = vscode.window.activeTextEditor;
@@ -35,21 +33,24 @@ const mainFn = async (panel: SidebarProvider, context: vscode.ExtensionContext, 
 };
 
 export function activate(context: vscode.ExtensionContext) {
-  const panel = new SidebarProvider(context);
+  try {
+    const panel = new SidebarProvider(context);
 
-  context.subscriptions.push(vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, panel));
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, panel));
+    // 优化并注释功能
+    let optimizeCode = vscode.commands.registerCommand("deepcode.optimizeCode", async () => {
+      await mainFn(panel, context, "optimizeCode");
+    });
+    context.subscriptions.push(optimizeCode);
 
-  // 优化并注释功能
-  let optimizeCode = vscode.commands.registerCommand("deepcode.optimizeCode", async () => {
-    await mainFn(panel, context, "optimizeCode");
-  });
-  context.subscriptions.push(optimizeCode);
-
-  // 注释功能
-  let comment = vscode.commands.registerCommand("deepcode.comment", async () => {
-    await mainFn(panel, context, "comment");
-  });
-  context.subscriptions.push(comment);
+    // 注释功能
+    let comment = vscode.commands.registerCommand("deepcode.comment", async () => {
+      await mainFn(panel, context, "comment");
+    });
+    context.subscriptions.push(comment);
+  } catch (e) {
+    vscode.window.showErrorMessage("No code  " + e);
+  }
 }
 
 export function deactivate() {}
