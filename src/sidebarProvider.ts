@@ -102,17 +102,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       // // const jsPath = path.join(this.context.extensionPath, "src/page/main.js");
       // // let mainJs = require("fs").readFileSync(jsPath, "utf-8");
 
-      // const htmlPath = path.join(this.context.extensionPath, "src/page/index.html");
-      // let html = require("fs").readFileSync(htmlPath, "utf-8");
+      const htmlPath = path.join(this.context.extensionPath, "src/page/index.html");
+      let html = require("fs").readFileSync(htmlPath, "utf-8");
 
       // // 替换 HTML 模板中的占位符
       // html = html.replace("{{cspSource}}", panel.webview.cspSource);
       // // .replace("{{styleCss}}", styleCss)
       // // .replace("{{mainJs}}", mainJs);
 
-      // panel.webview.html = html;
+      panel.webview.html = html;
 
-      panel.webview.html = setHtml(this._messages, this._curStatus);
+      // panel.webview.html = setHtml(this._messages, this._curStatus);
     }
   }
 

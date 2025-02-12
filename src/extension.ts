@@ -36,8 +36,8 @@ const mainFn = async (panel: SidebarProvider, context: vscode.ExtensionContext, 
 
 export function activate(context: vscode.ExtensionContext) {
   const panel = new SidebarProvider(context);
-  vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, panel);
-  context.subscriptions.push();
+
+  context.subscriptions.push(vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, panel));
 
   // 优化并注释功能
   let optimizeCode = vscode.commands.registerCommand("deepcode.optimizeCode", async () => {

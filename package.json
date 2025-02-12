@@ -77,13 +77,15 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    
-   
     "compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-
+    "watch": "tsc -watch -p ./",
     "build:webview": "vite build --config src/webview/vite.config.ts",
-    "watch:webview": "vite build --config src/webview/vite.config.ts --watch"
+    "watch:webview": "vite build --config src/webview/vite.config.ts --watch",
+
+
+    "vscode:prepublish2": "webpack --mode production",
+    "compile2": "webpack --mode none",
+    "watch2": "webpack --mode none --watch"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -94,7 +96,10 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.19.0",
-    "typescript": "^5.7.3"
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.7.3",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
