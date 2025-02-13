@@ -29,7 +29,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this._view = webviewView;
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this.context.extensionUri],
+      // 只允许webview加载我们插件的`media`目录下的资源
+      localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, "src"))],
+      // localResourceRoots: [this.context.extensionUri],
       // localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, "out"))],
     };
 
@@ -118,6 +120,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
       //  webview.html = setHtml(this._messages, this._curStatus);
 
+      // 获取磁盘上的资源路径
+      // const htmlPath = vscode.Uri.file(path.join(this.context.extensionPath, "src", "page/index.html"));
+      // console.log("htmlPath: ", htmlPath);
+      // // 获取在webview中使用的特殊URI
+      // const htmlVs = htmlPath.with({ scheme: "vscode-resource" });
+      // console.log("htmlVs: ", htmlVs);
+      // let html = fs.readFileSync(htmlPath, "utf-8");
+      // console.log("html: ", html);
+
+      // webview.html = html;
       webview.html = getPageHtml();
 
       console.log("panel.webview.html: ", webview.html);

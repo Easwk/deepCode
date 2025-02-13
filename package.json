@@ -2,25 +2,35 @@
   "name": "deepcode",
   "displayName": "deepCode",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["onCommand:deepcode.optimizeCode","onCommand:deepcode.comment","onWebviewPanel:vs-deepcode-bar.webview"],
   "main": "./dist/extension.js",
   "contributes": {
     "menus": {
       "editor/context": [
+        {
+          "command": "deepcode.translate",
+          "group": "navigation",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "deepcode.comment",
+          "group": "navigation",
+          "when": "editorHasSelection"
+        },
         {
           "command": "deepcode.optimizeCode",
           "group": "navigation",
           "when": "editorHasSelection"
         },
         {
-          "command": "deepcode.comment",
+          "command": "deepcode.selected",
           "group": "navigation",
           "when": "editorHasSelection"
         }
@@ -46,13 +56,23 @@
     },
     "commands": [
       {
-        "command": "deepcode.optimizeCode",
-        "title": "deepcode优化"
+        "command": "deepcode.translate",
+        "title": "deepcode翻译 "
       },
       {
         "command": "deepcode.comment",
         "title": "deepcode注释 "
+      },
+      {
+        "command": "deepcode.optimizeCode",
+        "title": "deepcode优化"
+      },
+     
+      {
+        "command": "deepcode.selected",
+        "title": "deepcode选中"
       }
+     
     ],
     "configuration": {
       "title": "deepcode",

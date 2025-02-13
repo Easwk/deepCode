@@ -1,0 +1,27 @@
+{
+  "modelName": "deepseek-R1",
+  "ajaxPostReqConfig": {
+    "url": "https://api.deepseek.com/chat/completions",
+    "data": {
+      "model": "deepseek-reasoner",
+      "messages": [
+        {
+          "role": "user",
+          "content": "deepseek-reasoner 是 DeepSeek 最新推出的推理模型 DeepSeek-R1。通过指定 model='deepseek-reasoner'，即可调用 DeepSeek-R1"
+        }
+      ],
+      "stream": false,
+      "response_format": {
+        "type": "text"
+      }
+    },
+    "config": {
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-c49544eefa7343ae83fbe4f500f44659"
+      }
+    }
+  },
+  "ajaxReqParamPath": "messages[0].content",
+  "ajaxPostResponePath": "response.choices[0].message.content"
+}

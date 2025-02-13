@@ -2,13 +2,13 @@ import axios from "axios";
 import * as vscode from "vscode";
 import { apiKeyFn, deepseekModelFn, getCurCurConfig } from "./credentials";
 
-export async function callDeepSeekAPI(prompt: string, preTitle: string, context: any): Promise<any> {
+export async function callDeepSeekAPI(title: string, text: string, context: any): Promise<any> {
   try {
     const modelConfig = await getCurCurConfig(context);
     const response: any = await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
-        title: `Deepcode: ${preTitle} with ${modelConfig.modelName}...`,
+        title: `Deepcode: ${title} with ${modelConfig.modelName}...`,
         cancellable: false,
       },
       async () => {
@@ -19,7 +19,7 @@ export async function callDeepSeekAPI(prompt: string, preTitle: string, context:
             ajaxReqParamPath,
           }: any = modelConfig;
 
-          setValueByPath(data, ajaxReqParamPath, `对一下代码内容${preTitle}:\n\`\`\`\n${prompt}\n\`\`\``);
+          setValueByPath(data, ajaxReqParamPath, text);
           console.log("url, data, config: ", url, data, config);
 
           return axios.post(url, data, config);
